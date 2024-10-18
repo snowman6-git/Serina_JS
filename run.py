@@ -1,7 +1,9 @@
-import discord, json
+import discord, json, os, asyncio
 from discord.ext import commands
+from lib import tools
 
-bot = commands.Bot(command_prefix='!', intents=discord.Intents.default())
+COGS_FOLDER = os.path.join(os.path.dirname(__file__), "cogs") #__file__ < 현재 파이썬 파일
+bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
 with open('token.json', 'r') as file: 
     token = json.load(file)['token']
@@ -11,8 +13,12 @@ async def hello(ctx):
     await ctx.respond("test")
 
 @bot.event
-async def on_ready():
-    print(f"{bot.user.name}가 로그인했습니다!")
+async def on_ready(): print(f"{bot.user.name} is ready!")
 
-# 봇 토큰으로 실행
-bot.run(token)
+async def main():
+    async with bot:
+        tools.cogs(bot, COGS_FOLDER)
+        await bot.start(token) 
+
+if __name__ == "__main__":
+    asyncio.run(main())
