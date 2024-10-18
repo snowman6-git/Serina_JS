@@ -17,7 +17,7 @@ async def on_ready(): print(f"{bot.user.name} is ready!")
 
 async def main():
     async with bot:
-        tools.cogs(bot, COGS_FOLDER)
+        await tools.bootup(bot, COGS_FOLDER)
         await bot.start(token) 
 
 if __name__ == "__main__":
