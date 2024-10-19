@@ -35,14 +35,12 @@ async def addons(interaction, action: app_commands.Choice[str]):
     async def addons_select(interaction: discord.Interaction):
         addon = addons[int(select.values[0])]
         cogs = tools.Cogs(bot)
-        
         if action.value == "reload":
             result = await cogs.reload(addon)
         if action.value == "load":
             result = await cogs.load(addon)
         if action.value == "unload":
             result = await cogs.unload(addon)
-        
         await interaction.response.defer() #ok 응답
         embed = discord.Embed(title=f"{addon}.{action.value}", description="")
         embed.add_field(name="결과", value=f"{result}", inline=False)

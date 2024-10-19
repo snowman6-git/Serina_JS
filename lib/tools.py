@@ -1,17 +1,5 @@
 import os
 
-# async def cogs(bot, addon):
-#     module = f"cogs.{addon}"
-#     try:
-#         try: 
-#             bot.unload_extension(module)
-#             print(f"\033[93m{addon}\033[0m is \033[32munloaded\033[0m!")
-#         except: bot.load_extension(module)
-#         print(f"\033[32m{addon}\033[0m is \033[32mOK\033[0m!")
-#     except Exception as E:
-#         print(f"\033[31m{addon}\033[0m is \033[31mERROR\033[0m!\n{E}")
-#         print("="*30)
-
 class Cogs: #잠 깨면 최적화 해둬라
     def __init__(self, bot):
         self.bot = bot
