@@ -16,8 +16,14 @@ class Cogs: #잠 깨면 최적화 해둬라
     def __init__(self, bot):
         self.bot = bot
     async def load(self, target):
-        await self.bot.load_extension(f"cogs.{target}")
-        print(f"\033[32m{target}\033[0m is \033[32mOK\033[0m!")
+        try:
+            await self.bot.load_extension(f"cogs.{target}")
+            print(f"\033[32m{target}\033[0m is \033[32mOK\033[0m!")
+            return "pass"
+        except Exception as E:
+            print(f"\033[31m{f"{target}"}\033[0m is \033[31mERROR\033[0m!\n{E}")
+            print("="*30)
+            return E
     async def reload(self, target):
         try:
             # await self.bot.reload_extension(f"cogs.{target}")
@@ -30,10 +36,15 @@ class Cogs: #잠 깨면 최적화 해둬라
             print(f"\033[31m{f"{target}"}\033[0m is \033[31mERROR\033[0m!\n{E}")
             print("="*30)
             return E
-    def unload(self, target):
-        print(f"\033[90m{f"{target}"}\033[0m is \033[90munloaded\033[0m!")
-        pass
-
+    async def unload(self, target):
+        try:
+            await self.bot.unload_extension(f"cogs.{target}")
+            print(f"\033[90m{f"{target}"}\033[0m is \033[90munloaded\033[0m!")
+            return "pass"
+        except Exception as E:
+            print(f"\033[31m{f"{target}"}\033[0m is \033[31mERROR\033[0m!\n{E}")
+            print("="*30)
+            return E
     @staticmethod
     def find_and_load():
         return Cogs()
