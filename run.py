@@ -1,7 +1,4 @@
-import discord
-import json
-import os
-import asyncio
+import discord, json, os, asyncio
 from discord.ext import commands
 from discord import app_commands
 from lib import tools
@@ -14,7 +11,7 @@ with open('token.json', 'r') as file:
 
 @bot.event
 async def on_ready():
-    # 한번만 동기화 (안되면 빼샘)
+    # 한번만 동기화 (안되면 빼샘) by fisher
     if not hasattr(bot, 'synced'):
         await bot.tree.sync()
         bot.synced = True
@@ -27,45 +24,28 @@ async def on_ready():
     app_commands.Choice(name="unload", value="unload"),
 ])
 async def addons(interaction: discord.Interaction, action: app_commands.Choice[str]):
-    # 관리자 X => 출력
     if interaction.user.id not in Admin:
         await interaction.response.send_message("봇 제작자 이외에는 접근할 수 없어요. 문제가 생겼다면 따로 연락해주세요", ephemeral=True)
         return
-    
-    # UI생성
     DView = discord.ui.View()
     select = discord.ui.Select(placeholder="애드온을 선택하세요")
-    
-    # 애드온 목록을 계속 불러오기
     addons = tools.addon_list()
-    
-    # enumerate 반복문 최적화
-    for i, addon in enumerate(addons):
+    # enumerate 반복문 최적화 by fisher
+    for i, addon in enumerate(addons): #addon만으로 가능, len 없어도 됌, 내부에서 변수값이 addon[i]가 됌
         select.add_option(label=f"{addon}", value=str(i))
-    
     DView.add_item(select)
-
     async def addons_select(interaction: discord.Interaction):
         addon = addons[int(select.values[0])]
         cogs = tools.Cogs(bot)
         result = ""
-
-        # action 따라 결과처리
-        if action.value == "reload":
-            result = await cogs.reload(addon)
-        elif action.value == "load":
-            result = await cogs.load(addon)
-        elif action.value == "unload":
-            result = await cogs.unload(addon)
-
-        # 응답,처리 처리
+        if action.value == "reload": result = await cogs.reload(addon)
+        elif action.value == "load": result = await cogs.load(addon)
+        elif action.value == "unload": result = await cogs.unload(addon)
         await interaction.response.defer()  # 대기
         embed = discord.Embed(title=f"{addon}.{action.value}", description="")
         embed.add_field(name="결과", value=f"{result}", inline=False)
         await interaction.edit_original_response(content="", embed=embed, view=None)
         await bot.tree.sync()  # 명령어 동기화
-
-    # 콜백 설정
     select.callback = addons_select
     await interaction.response.send_message("애드온 매니저 v1.0", view=DView, ephemeral=True)  # ephemeral=True 나만 보기
 

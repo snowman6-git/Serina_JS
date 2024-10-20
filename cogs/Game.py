@@ -9,22 +9,28 @@ ASSET_SOUNDS = os.path.join(os.path.dirname(__file__), "..", "assets/sounds")
 class Game(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
 
     @commands.Cog.listener()
     async def on_ready(self):
         await self.bot.tree.sync()
         # print(f'{self.bot.user}의 슬래시 커맨드가 동기화되었습니다.')
 
-    @app_commands.command(name="사운드", description="modify addons") #관리만 가능하게 바꿀것
-    async def addons(self, ctx, interaction):
+    @app_commands.command(name="사운드", description="사운드 테스트") #관리만 가능하게 바꿀것
+    async def addons(self, interaction: discord.Interaction):
         embed = discord.Embed(title="사운드보드", description=f"")
-        a = await ctx.send(embed=embed)
+        a = await interaction.response.send_message(embed=embed)
+
+        sounds = os.listdir(ASSET_SOUNDS)
+        await interaction.channel.send(sounds)
+
+
         DView = discord.ui.View()
         options = ["새로고침"]
         for i in range(len(options)):
             DView.add_item(discord.ui.Button(style=discord.ButtonStyle.gray, label=options[i], custom_id=options[i]))
-        for i in range(len(ASSET_SOUNDS)): #사운드 리스트에서 하나씩 리턴함
-            button = discord.ui.Button(style=discord.ButtonStyle.gray, label=f"{i+1}: {ASSET_SOUNDS[i]}", custom_id=str(i))#, emoji=bt_list[i])
+        for i in range(len(sounds)): #사운드 리스트에서 하나씩 리턴함
+            button = discord.ui.Button(style=discord.ButtonStyle.gray, label=f"{i+1}: {sounds[i]}", value=str(i))#, emoji=bt_list[i])
             try: DView.add_item(button)
             except ValueError:
                 print("밸류 에러")
