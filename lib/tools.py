@@ -1,4 +1,4 @@
-import os
+import os, time
 
 class Cogs: #잠 깨면 최적화 해둬라
     def __init__(self, bot):
@@ -37,6 +37,10 @@ class Cogs: #잠 깨면 최적화 해둬라
     def find_and_load():
         return Cogs()
     
+def clock(wait):
+    timer = f"<t:{int(time.time()) + int(wait)}:R>" #R
+    return timer
+
 
 def addon_list():
     addons = []

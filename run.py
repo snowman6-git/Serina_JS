@@ -5,6 +5,7 @@ from lib import tools
 
 COGS_FOLDER = os.path.join(os.path.dirname(__file__), "cogs")  #__file__ < 현재 파이썬 파일
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all(), sync_command=True)
+bot.voice_connections = []
 Admin = [412863872127729687]
 with open('token.json', 'r') as file: 
     token = json.load(file)['token']
