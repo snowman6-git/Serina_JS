@@ -44,52 +44,6 @@ async function Command_Setup() {
   } catch (error) { console.error('❌ 명령어 등록 실패:', error) }
 }
 
-client.on('messageCreate', async message => {
-  if (message.content === '!버튼') {
-    const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId('next')
-        .setLabel('다음')
-        .setStyle(ButtonStyle.Primary),
-      new ButtonBuilder()
-        .setCustomId('exit')
-        .setLabel('종료')
-        .setStyle(ButtonStyle.Danger)
-    );
-    const sentMessage = await message.reply({ 
-      content: '버튼을 선택하세요!', 
-      components: [row] 
-    });
-    let isRunning = true; // 반복문 제어 플래그
-    let count = 0;
-    while (isRunning) {
-      try {
-        // 버튼 클릭을 기다림 (최대 10초)
-        const interaction = await sentMessage.awaitMessageComponent({ 
-          filter: i => i.user.id === message.author.id, // 명령어를 입력한 사용자만 처리
-          time: 10_000 // 10초 대기
-        });
-
-        // 버튼 ID별 분기 처리
-        if (interaction.customId === 'next') {
-          await interaction.update({
-            content: `${count}`
-          })
-          count++
-
-          // await interaction.reply('다음 버튼이 눌렸습니다!');
-        } else if (interaction.customId === 'exit') {
-          isRunning = false; // 반복문 종료
-          await interaction.reply('종료합니다.');
-        }
-      } catch (error) {
-        console.log('시간 초과 또는 오류 발생');
-        await message.reply('버튼 선택 시간이 초과되었습니다.');
-        isRunning = false; // 반복문 종료
-      }
-    }
-  }
-});
 
 
 // client.on('messageCreate', async(message) => {

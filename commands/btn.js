@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
-  name: '버튼',
-  description: '버튼 테스트',
+  name: '모집',
+  description: '미니게임 모집 테스트',
   data: new SlashCommandBuilder()
     .setName('버튼')
     .setDescription('버튼을 사용한 반복적인 인터랙션 예제'),
@@ -10,50 +10,57 @@ module.exports = {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('next')
-        .setLabel('다음')
+        .setLabel('참여')
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
         .setCustomId('exit')
-        .setLabel('종료')
+        .setLabel('나가기(테스트)')
         .setStyle(ButtonStyle.Danger)
+        .setDisabled()
     );
 
     const sentMessage = await interaction.reply({ 
       content: '버튼을 선택하세요!', 
       components: [row],
-      fetchReply: true // interaction.reply의 반환값을 Message 객체로 받기 위해 필요
+    });
+    const collector = sentMessage.createMessageComponentCollector({
+      time: 60_000,
     });
 
-    let isRunning = true; // 반복문 제어 플래그
-    let count = 0;
+    let party = []
+    collector.on('collect', async buttonInteraction => {
+      let username = buttonInteraction.user.globalName
+      if (buttonInteraction.customId === 'next') {
 
-    while (isRunning) {
-      try {
-        // 버튼 클릭을 기다림 (최대 10초)
-        const buttonInteraction = await sentMessage.awaitMessageComponent({ 
-          filter: i => i.user.id === interaction.user.id, // 명령어를 입력한 사용자만 처리
-          time: 10_000 // 10초 대기
-        });
-
-        // 버튼 ID별 분기 처리
-        if (buttonInteraction.customId === 'next') {
-          count++;
-          await buttonInteraction.update({
-            content: `${count}`,
-            components: [row] // 버튼 유지
-          });
-        } else if (buttonInteraction.customId === 'exit') {
-          isRunning = false; // 반복문 종료
-          await buttonInteraction.update({ 
-            content: '종료합니다.', 
-            components: [] // 버튼 제거
-          });
+        if (!party.includes(username)) {
+          party.push(username)
+        } else{
+          await interaction.followUp({ 
+            content: `-# 이 메세지는 저희가 지워드릴 수 없어요...\n${username}님은 이미 참가하셨어요.`, 
+            ephemeral: true, // 해당 유저에게만 보이는 메시지
+          })
         }
-      } catch (error) {
-        console.log('시간 초과 또는 오류 발생');
-        await interaction.followUp('버튼 선택 시간이 초과되었습니다.');
-        isRunning = false; // 반복문 종료
+
+        await buttonInteraction.update({
+          content: `${party.toString().replace(",", "\n")}`,
+          components: [row] // 버튼 유지
+        });
+      } else if (buttonInteraction.customId === 'exit') {
       }
-    }
+    });
+
+    collector.on('end', async collected => {
+      await sentMessage.edit({
+        content: '게임을 시작합니다!',
+        components: [] // 버튼 제거
+      });
+      if (collected.size < 2) {
+        await sentMessage.edit({
+          content: '모집된 인원이 부족합니다! 종료합니다',
+          components: [] // 버튼 제거
+        });
+      }
+    });
+
   },
 };

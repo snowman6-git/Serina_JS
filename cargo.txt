@@ -1,0 +1,19 @@
+// await interaction.channel.send({
+//   content: `https://cdn.discordapp.com/avatars/${buttonInteraction.user.id}/${buttonInteraction.user.avatar}.webp?size=80`,
+// });
+
+
+const alret_alredy = await interaction.followUp({ 
+content: `-# 이 메세지는 3초후 저희가 지워드릴게요!\n${username}님은 이미 참가하셨어요.`, 
+ephemeral: true, // 해당 유저에게만 보이는 메시지
+})
+setTimeout(async () => {
+
+await alret_alredy.delete().catch(console.error); // 메시지 삭제
+}, 3000);
+
+const collector = sentMessage.createMessageComponentCollector({
+    time: 10_000, // 10초 대기
+    // max: 10 // 최대 10번의 버튼 클릭 허용
+    // filter: i => i.user.id === interaction.user.id, // 명령어를 입력한 사용자만 처리
+});
