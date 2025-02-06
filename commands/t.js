@@ -3,5 +3,6 @@ module.exports = {
     description: 't',
     async execute(interaction) {
       await interaction.reply('t!');
+      
     },
 }
