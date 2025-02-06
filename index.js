@@ -10,6 +10,7 @@ const db = new Database(DB)
 db.query("drop table community_chat").run()
 db.query(`CREATE TABLE IF NOT EXISTS community_chat(id INTEGER PRIMARY KEY AUTOINCREMENT, user text, uid INTEGER, chat text, guild_id INTEGER, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`).run()
 const client = new Client({
+  disableMentions: "everyone",
   intents:  [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -75,7 +76,7 @@ client.on('messageCreate', async message => {
             content: `${count}`
           })
           count++
-          
+
           // await interaction.reply('다음 버튼이 눌렸습니다!');
         } else if (interaction.customId === 'exit') {
           isRunning = false; // 반복문 종료
