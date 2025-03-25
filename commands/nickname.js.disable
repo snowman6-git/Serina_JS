@@ -1,0 +1,36 @@
+module.exports = {
+  name: '닉',
+  description: '길드 내 전체 타겟',
+  async execute(interaction, client) {
+      try {
+        const guild = client.guilds.cache.get('1058343975779573852');
+        if (!guild) return console.error('Guild not found');
+
+        // console.log(member.nickname)
+        // console.log(member.username)
+
+        await guild.members.fetch();
+        const members = guild.members.cache.filter(member => !member.user.bot).map(member => member.user.id)
+
+        members.forEach(async(member_id, index) => {
+
+          const member = guild.members.cache.get(`${member_id}`);
+          try{
+            await member.setNickname(member.user.username)
+          }
+          catch(error){
+            console.log(error)
+          }
+
+          // console.log(member.name)
+          // let target = guild.members.cache.get(`${member_id}`)
+          // console.log(target.username)
+        });
+        await interaction.reply(`ok!`);
+
+
+      } catch (error) {
+        console.error('Error responding to interaction:', error);
+      }
+  }
+}

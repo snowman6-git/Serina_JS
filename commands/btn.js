@@ -1,4 +1,7 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 async function into_player(username, uid) {
   player = {
@@ -51,7 +54,6 @@ module.exports = {
             ephemeral: true, // 해당 유저에게만 보이는 메시지
           })
         }
-        
         //아니면 겜시작하고 플레이어로 만들던가
         const sorted_party = party.map(item => item.name).toString().replace(",", "\n");
         await buttonInteraction.update({
@@ -61,7 +63,6 @@ module.exports = {
       } else if (buttonInteraction.customId === 'exit') {
       }
     });
-
     collector.on('end', async collected => {
       await sentMessage.edit({
         content: '게임을 시작합니다!',
@@ -70,12 +71,14 @@ module.exports = {
 
       let i = true
       while(i){
-        party.forEach(turn_of);{
+        
+        party.forEach(async function(turn_of) {
           await sentMessage.edit({
             content: `${turn_of.name}의 차례!`,
             components: [] // 버튼 제거
-          }); 
-        }
+          });
+          await sleep(1000)
+        });
         i = false
       }
 
